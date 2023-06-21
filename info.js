@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 
 const API_ENDPOINT = "/graphql";
+let submissions = [];
 const App = () => {
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState([]);
+  const [userInfo, setUserInfo] = useState(null);
 
-  const print = (item) => {
-    const uniqueValues = [...new Set([...user, ...item])];
-    setUser((prevState) => {
-      return uniqueValues;
-    });
-  };
+  // function doOtherAsyncThing() {
+  //   return new Promise((resolve) => {
+  //     setTimeout(() => resolve("it’s done!"), 500);
+  //   });
+  // }
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    const query = `
+    try {
+      const query = `
       {
         recentAcSubmissionList(username: "${username}") {
           id
@@ -23,25 +25,27 @@ const App = () => {
       }
     `;
 
-    const url = `${API_ENDPOINT}?query=${encodeURIComponent(query)}`;
+      const url = `${API_ENDPOINT}?query=${encodeURIComponent(query)}`;
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((result) => {
-        const titles = result.data.recentAcSubmissionList.map(
-          (submission) => submission.title
-        );
-        print(titles);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+
+      await setUserInfo({ ...userInfo, data });
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error cases
+    }
   };
-
   const handleSubmit = (event) => {
     handleFormSubmit(event);
+    submissions.push(userInfo);
+    console.log(userInfo);
   };
-
   return (
     <div>
       <h1>User Information</h1>
@@ -54,15 +58,6 @@ const App = () => {
         />
         <button type="submit">Submit</button>
       </form>
-      {user.length > 0 ? (
-        <p>
-          {user.map((e) => (
-            <li>{e}</li>
-          ))}
-        </p>
-      ) : (
-        <p>No User Found</p>
-      )}
     </div>
   );
 };
