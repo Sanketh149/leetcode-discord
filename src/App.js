@@ -1,16 +1,31 @@
 import React, { useState } from "react";
+import "./App.css"; // Import the CSS file for styling
 
 const API_ENDPOINT = "/graphql";
 const App = () => {
   const [username, setUsername] = useState("");
   const [user, setUser] = useState([]);
-
-  const print = (item) => {
-    const uniqueValues = [...new Set([...user, ...item])];
+  const [leetId, setLeetId] = useState([]);
+  const displayTitle = (item, titleSlug) => {
+    console.log(item);
+    const exisitingTitles = user.map((innerArray) => innerArray[0]);
+    const exisitingSlugs = user.map((innerArray) => innerArray[1]);
+    const uniqueTitles = [...new Set([...exisitingTitles, ...item])];
+    const uniqueSlugs = [...new Set([...exisitingSlugs, ...titleSlug])];
+    // const uniquePairs = uniqueTitles.map((name, index) => ({
+    //   name,
+    //   link: uniqueSlugs[index],
+    // }));
+    const uniquePairs = [];
+    for (let i = 0; i < uniqueSlugs.length; i++) {
+      const temp = [uniqueTitles[i], uniqueSlugs[i]];
+      uniquePairs.push(temp);
+    }
     setUser((prevState) => {
-      return uniqueValues;
+      return uniquePairs;
     });
   };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
@@ -19,6 +34,7 @@ const App = () => {
         recentAcSubmissionList(username: "${username}") {
           id
           title
+          titleSlug
         }
       }
     `;
@@ -31,7 +47,11 @@ const App = () => {
         const titles = result.data.recentAcSubmissionList.map(
           (submission) => submission.title
         );
-        print(titles);
+        const titleslugs = result.data.recentAcSubmissionList.map(
+          (submission) => submission.titleSlug
+        );
+        displayTitle(titles, titleslugs);
+        // displayTitleSlug(titleslugs);
       })
       .catch((error) => {
         console.log(error);
@@ -40,28 +60,42 @@ const App = () => {
 
   const handleSubmit = (event) => {
     handleFormSubmit(event);
+    setLeetId((prevState) => {
+      return [...prevState, event.target.value];
+    });
+    console.log(leetId);
   };
 
   return (
-    <div>
-      <h1>User Information</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="app">
+      <h1 className="app__title">User Information</h1>
+      <form onSubmit={handleSubmit} className="app__form">
         <input
           type="text"
           value={username}
           onChange={(event) => setUsername(event.target.value)}
           placeholder="Enter username"
+          className="app__input"
         />
-        <button type="submit">Submit</button>
+        <button type="submit" className="app__button">
+          Add Friend
+        </button>
       </form>
       {user.length > 0 ? (
-        <p>
-          {user.map((e) => (
-            <li>{e}</li>
+        <ul className="app__list">
+          {user.map((item) => (
+            <li className="app__item">
+              <a
+                href={`https://leetcode.com/problems/${item[1]}`}
+                target="_blank"
+              >
+                {item[0]}
+              </a>
+            </li>
           ))}
-        </p>
+        </ul>
       ) : (
-        <p>No User Found</p>
+        <p className="app__message">No User Found</p>
       )}
     </div>
   );
