@@ -1,0 +1,70 @@
+.app {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.app__title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.app__form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.app__input {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.app__button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.app__button_disabled {
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #ff6969;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.app__list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.app__item {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.app__message {
+  font-size: 18px;
+  font-style: italic;
+  color: #888;
+}
+
+.app__list a {
+  color: #007bff; /* Set the color for regular links */
+  text-decoration: none; /* Remove underline for links */
+}
+
+.app__list a:visited {
+  color: #007bff; /* Set the color for visited links */
+}
+
+.errorShow {
+  color: red;
+}
